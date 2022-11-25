@@ -20,11 +20,78 @@ typedef struct _directions {
     char dir_target;
 } directions;
 
+directions carDirections[8] = {{'N', 'N'}, {'N', 'N'}, {'N', 'W'}, {'S', 'S'}, {'S', 'E'}, {'N', 'N'}, {'E', 'N'}, {'W', 'N'}};
+
+void ArriveIntersection(char *dir) {
+    sem_wait(&semaphoreArrival);
+}
+
+void ExitIntersection(char *dir) {
+    sem_post(&semaphoreArrival);
+}
+
+void CrossIntersection(char *dir) {
+    if (strcmp(dir, "straight") == 0) {
+        // Handle Straight Driving
+        sem_wait(&semaphoreWestToEast);
+        sem_wait(&semaphoreNorthToEast);
+        sem_wait(&semaphoreEastToSouth);
+        sem_wait(&semaphoreEastToWest);
+        sem_wait(&semaphoreEastToNorth);
+        sem_wait(&semaphoreWestToNorth);
+
+        // WAIT for Seconds Using Spin
+        printf("GOING STRAIGHT");
+        printf("\n");
+
+        // Release
+        sem_post(&semaphoreWestToEast);
+        sem_post(&semaphoreNorthToEast);
+        sem_post(&semaphoreEastToSouth);
+        sem_post(&semaphoreEastToWest);
+        sem_post(&semaphoreEastToNorth);
+        sem_post(&semaphoreWestToNorth);
+
+    } else if (strcmp(dir, "left") == 0) {
+        // Handle Left Turn
+        sem_wait(&semaphoreWestToEast);
+        sem_wait(&semaphoreEastToSouth);
+        sem_wait(&semaphoreWestToNorth);
+        sem_wait(&semaphoreNorthToSouth);
+        sem_wait(&semaphoreEastToWest);
+
+        printf("LEFT");
+        printf("\n");
+
+        sem_post(&semaphoreWestToEast);
+        sem_post(&semaphoreEastToSouth);
+        sem_post(&semaphoreWestToNorth);
+        sem_post(&semaphoreNorthToSouth);
+        sem_post(&semaphoreEastToWest);
+    } else {
+        // Handle Right Turn
+        sem_wait(&semaphoreNorthToWest);
+        sem_wait(&semaphoreWestToEast);
+
+        printf("RIGHT");
+        printf("\n");
+
+        sem_post(&semaphoreNorthToWest);
+        sem_post(&semaphoreWestToEast);
+    }
+}
 
 void threadfunc(void* direction) {
     char *dir = direction;
-    printf(dir);
-    printf("\n");
+
+    // Arrival Semaphore
+    ArriveIntersection(dir);
+
+    // Cross Semaphores
+    CrossIntersection(dir);
+
+    // Exit Sempahore
+    ExitIntersection(dir);
 }
 
 int main(void) {
@@ -64,10 +131,11 @@ int main(void) {
 
     // Queue of Vehicles - 
     char cars[8][10] = {"straight", "straight", "left", "straight", "right", "straight", "right", "left"};
-    //directions cars[8] = {{'N', 'N'}, {'N', 'N'}, {'N', 'W'}, {'S', 'S'}, {'S', 'E'}, {'N', 'N'}, {'E', 'N'}, {'W', 'N'}};
 
     for (int i = 0; i < 8; i++) {
         // allocate thread and pass cars[i]
+
+        // TODO = Call Based on Timing*
         pthread_t *mythread;
         mythread = (pthread_t *)malloc(sizeof(*mythread));
         pthread_create(mythread, NULL,  (void*)threadfunc, (void*)cars[i]);
@@ -75,21 +143,3 @@ int main(void) {
     
     return 0;
 }
-
-    // Arriving - First Car
-    // Crossing - Traffic Crossing from Left to Right
-    // Crossing - Traffic Turning from Right to Left
-    // Crossing - Traffic Turning from Left to Straight
-    // Crossing - Traffic Coming Straight On
-    // Crossing - Traffic Coming from Right to Left
-
-    // Locks - Going Straight
-    // Arriving - First Car
-    // Crossing - Traffic Crossing from Left to Right
-    // Crossing - Traffic Turning from Right to Left
-    // Crossing - Traffic Turning from Left to Straight
-    // Crossing - Traffic Coming Straight On
-    // Crossing - Traffic Coming from Right to Left
-
-    
-       // Crossing - Traffic Crossing from West to East
