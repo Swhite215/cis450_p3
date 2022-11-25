@@ -10,6 +10,7 @@
         "args": [
           "-g",
           "-lpthread",
+          "-lrt",
           "${file}",
           "-o",
           "${fileDirname}/${fileBasenameNoExtension}"

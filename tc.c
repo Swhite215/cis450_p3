@@ -5,26 +5,40 @@
 #include <unistd.h>
 #include <semaphore.h>
 
-sem_t semaphore;
-
-void threadfunc() {
-    while (1) {
-        sem_wait(&semaphore);
-        printf("Hello from da thread!\n");
-        sem_post(&semaphore);
-        sleep(1);
-    }
-}
+sem_t semaphoreArrival;
+sem_t semaphoreWestToEast;
+sem_t semaphoreEastToSouth;
+sem_t semaphoreWestToNorth;
+sem_t semaphoreNorthToSouth;
+sem_t semaphoreEastToWest;
+sem_t semaphoreNorthToEast;
+sem_t semaphoreEastToNorth;
+sem_t semaphoreNorthToWest;
 
 typedef struct _directions {
     char dir_original;
     char dir_target;
 } directions;
 
+
+void threadfunc(void* direction) {
+    char *dir = direction;
+    printf(dir);
+    printf("\n");
+}
+
 int main(void) {
     
     // initialize semaphore, only to be used with threads in this process, set value to 1
-    sem_init(&semaphore, 0, 1);
+    sem_init(&semaphoreArrival, 0, 1);
+    sem_init(&semaphoreWestToEast, 0, 1);
+    sem_init(&semaphoreEastToSouth, 0, 1);
+    sem_init(&semaphoreWestToNorth, 0, 1);
+    sem_init(&semaphoreNorthToSouth, 0, 1);
+    sem_init(&semaphoreEastToWest, 0, 1);
+    sem_init(&semaphoreNorthToEast, 0, 1);
+    sem_init(&semaphoreEastToNorth, 0, 1);
+    sem_init(&semaphoreNorthToWest, 0, 1);
 
     // Locks - Turning Left
     // Arriving - First Car
@@ -49,33 +63,15 @@ int main(void) {
     // Crossing - Traffic Crossing from West to East - DUPLICATE
 
     // Queue of Vehicles - 
-    // int cars[8] = {"straight", "straight", "left", "straight", "right", "straight", "right", "left"};
-    directions cars[8] = {{'N', 'N'}, {'N', 'N'}, {'N', 'W'}, {'S', 'S'}, {'S', 'E'}, {'N', 'N'}, {'E', 'N'}, {'W', 'N'}};
+    char cars[8][10] = {"straight", "straight", "left", "straight", "right", "straight", "right", "left"};
+    //directions cars[8] = {{'N', 'N'}, {'N', 'N'}, {'N', 'W'}, {'S', 'S'}, {'S', 'E'}, {'N', 'N'}, {'E', 'N'}, {'W', 'N'}};
 
-    for (int i = 0; i < cars.length; i++) {
+    for (int i = 0; i < 8; i++) {
         // allocate thread and pass cars[i]
-
+        pthread_t *mythread;
+        mythread = (pthread_t *)malloc(sizeof(*mythread));
+        pthread_create(mythread, NULL,  (void*)threadfunc, (void*)cars[i]);
     }
-    pthread_t *mythread;
-    
-    mythread = (pthread_t *)malloc(sizeof(*mythread));
-    
-    // start the thread
-    printf("Starting thread, semaphore is unlocked.\n");
-    pthread_create(mythread, NULL,  (void*)threadfunc, NULL);
-    
-    getchar();
-    
-    sem_wait(&semaphore);
-    printf("Semaphore locked.\n");
-    
-    // do stuff with whatever is shared between threads
-    getchar();
-    
-    printf("Semaphore unlocked.\n");
-    sem_post(&semaphore);
-    
-    getchar();
     
     return 0;
 }
