@@ -32,7 +32,7 @@ int main(void) {
     
     // start the thread
     printf("Starting thread, semaphore is unlocked.\n");
-    pthread_create(mythread, NULL, (void*)threadfunc, NULL);
+    pthread_create(mythread, NULL,  (void*)threadfunc, NULL);
     
     getchar();
     

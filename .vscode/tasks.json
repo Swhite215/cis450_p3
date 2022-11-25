@@ -8,9 +8,8 @@
         "label": "clang++ build active file",
         "command": "/usr/bin/clang++",
         "args": [
-          "-std=c++17",
-          "-stdlib=libc++",
           "-g",
+          "-lpthread",
           "${file}",
           "-o",
           "${fileDirname}/${fileBasenameNoExtension}"
@@ -24,6 +23,25 @@
         "group": {
           "kind": "build",
           "isDefault": true
+        }
+      },
+      {
+        "label": "clang build active file",
+        "type": "shell",
+        "command": "/usr/bin/clang",
+        "args": [
+          "-g",
+          "${file}",
+          "-o",
+          "${fileDirname}/${fileBasenameNoExtension}"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "problemMatcher": [],
+        "group": "build",
+        "presentation": {
+          "reveal": "silent"
         }
       }
     ]

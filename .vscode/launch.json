@@ -11,6 +11,14 @@
             "program": "${fileDirname}/${fileBasenameNoExtension}",
             "args": [],
             "preLaunchTask": "clang++ build active file"
+        },
+        {
+            "name": "clang - Build and debug active C file",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "preLaunchTask": "clang build active file"
         }
     ]
 }
