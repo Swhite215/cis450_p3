@@ -57,7 +57,7 @@ void ArriveIntersection(directions *dir) {
         sem_wait(&semaphoreNorthToEast);
         sem_wait(&semaphoreEastToNorth);
 
-    }  else if (3 + 1 == 4) {
+    }  else if ((dir->dir_original == 'N' && dir->dir_original == 'E') || (dir->dir_original == 'S' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
         // Handle Left Turn        
         sem_wait(&semaphoreWestToEast);
         sem_wait(&semaphoreEastToSouth);
@@ -73,7 +73,6 @@ void ArriveIntersection(directions *dir) {
     // Special Situations
     // Straight North to North or South to South can cross at same time.
     // Straight East to East and West to West can cross at same time.
-    // 
     
 }
 
@@ -93,7 +92,7 @@ void ExitIntersection(directions *dir) {
         sem_post(&semaphoreNorthToEast);
         sem_post(&semaphoreEastToNorth);
 
-    }  else if (3 + 1 == 4) {
+    }  else if ((dir->dir_original == 'N' && dir->dir_original == 'E') || (dir->dir_original == 'S' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
         // Handle Left Turn        
         sem_post(&semaphoreWestToEast);
         sem_post(&semaphoreEastToSouth);
@@ -114,89 +113,31 @@ void CrossIntersection(directions *dir) {
 
     if (dir->dir_original == dir->dir_target) {
         printf("\nSTRAIGHT\n");
-        // Handle Straight
-        printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
+
+        // Spin 
         Spin(2);
-    } else if (3 + 1 == 4) {
-             printf("\nLEFT\n");
-        // Handle Left Turn
+
+        // Log Straight Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
+
+    }  else if ((dir->dir_original == 'N' && dir->dir_original == 'E') || (dir->dir_original == 'S' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
+        printf("\nLEFT\n");
+        
+        // Spin 
         Spin(3);
-    } else {
-        // Handle Right Turn
-        printf("\nRIGHT\n");
+
+        // Log LEft Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
+    } else {
+        printf("\nRIGHT\n");
+
+        //Spin
         Spin(1);
+
+        // Log Right Turn
+        printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
     }
 
-    
-
-    // // Check for Crossing Before Continuing
-    // printf("CROSSING\n");
-    // printf(&dir->dir_original);
-    // printf(&dir->dir_target);
-    // printf("\n");
-
-    // // Update to Check
-    // if (strcmp(dir, "straight") == 0) {
-    //     // Handle Straight Driving
-    //     sem_wait(&semaphoreWestToEast);
-    //     sem_wait(&semaphoreEastToSouth);
-    //     sem_wait(&semaphoreWestToNorth);
-    //     sem_wait(&semaphoreEastToWest);
-    //     sem_wait(&semaphoreNorthToEast);
-    //     sem_wait(&semaphoreEastToNorth);
-
-    //     // Wait for 2 Seconds Using Spin
-    //     Spin(2);
-
-    //     // Log Crossing Information
-    //     printf("GOING STRAIGHT");
-    //     printf("\n");
-
-    //     // Release
-    //     sem_post(&semaphoreWestToEast);
-    //     sem_post(&semaphoreEastToSouth);
-    //     sem_post(&semaphoreWestToNorth);
-    //     sem_post(&semaphoreEastToWest);
-    //     sem_post(&semaphoreNorthToEast);
-    //     sem_post(&semaphoreEastToNorth);
-
-    // } else if (strcmp(dir, "left") == 0) {
-    //     // Handle Left Turn
-    //     sem_wait(&semaphoreWestToEast);
-    //     sem_wait(&semaphoreEastToSouth);
-    //     sem_wait(&semaphoreWestToNorth);
-    //     sem_wait(&semaphoreEastToWest);
-    //     sem_wait(&semaphoreNorthToSouth);
-
-    //     // Wait for 3 Seconds Using Spin
-    //     Spin(3);
-
-    //     // Log Crossing Information
-    //     printf("TURNING LEFT");
-    //     printf("\n");
-
-    //     sem_post(&semaphoreWestToEast);
-    //     sem_post(&semaphoreEastToSouth);
-    //     sem_post(&semaphoreWestToNorth);
-    //     sem_post(&semaphoreNorthToSouth);
-    //     sem_post(&semaphoreEastToWest);
-    // } else {
-    //     // Handle Right Turn
-    //     sem_wait(&semaphoreWestToEast);
-    //     sem_wait(&semaphoreNorthToWest);
-
-    //     // Wait for 1 Seconds Using Spin
-    //     Spin(1);
-
-    //     // Log Crossing Information
-    //     printf("TURNING RIGHT");
-    //     printf("\n");
-
-    //     sem_post(&semaphoreNorthToWest);
-    //     sem_post(&semaphoreWestToEast);
-    // }
 }
 
 void threadfunc(void* direction) {
