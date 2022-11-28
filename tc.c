@@ -114,25 +114,25 @@ void CrossIntersection(directions *dir) {
     if (dir->dir_original == dir->dir_target) {
         printf("\nSTRAIGHT\n");
 
-        // Spin 
-        Spin(2);
+        // // Spin 
+        // Spin(2);
 
         // Log Straight Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
 
     }  else if ((dir->dir_original == 'N' && dir->dir_original == 'E') || (dir->dir_original == 'S' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
         printf("\nLEFT\n");
-        
-        // Spin 
-        Spin(3);
+
+        // // Spin 
+        // Spin(3);
 
         // Log LEft Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
     } else {
         printf("\nRIGHT\n");
 
-        //Spin
-        Spin(1);
+        // //Spin
+        // Spin(1);
 
         // Log Right Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
