@@ -16,8 +16,7 @@ double GetTime() {
 
 void Spin(int howlong) {
     double t = GetTime();
-    while ((GetTime() - t) < (double)howlong)
-	; // do nothing in loop
+    while ((GetTime() - t) < (double)howlong); // do nothing in loop
 }
 
 sem_t semaphoreArrival;
@@ -37,6 +36,8 @@ typedef struct _directions {
     int cid;
 } directions;
 
+// float time = 0.0;
+
 void ArriveIntersection(directions *dir) {
 
     // Obtain Semaphore
@@ -47,8 +48,10 @@ void ArriveIntersection(directions *dir) {
 
     // Check Crossing Here - Handle Special Situations
 
+
     // Handle Allocation of Semphores
-     if (dir->dir_original == dir->dir_target) {
+    if (dir->dir_original == dir->dir_target) {
+        //  printf("\nACQUIRING STRAIGHT\n");
         // Handle Straight Driving
         sem_wait(&semaphoreWestToEast);
         sem_wait(&semaphoreEastToSouth);
@@ -57,7 +60,8 @@ void ArriveIntersection(directions *dir) {
         sem_wait(&semaphoreNorthToEast);
         sem_wait(&semaphoreEastToNorth);
 
-    }  else if ((dir->dir_original == 'N' && dir->dir_original == 'E') || (dir->dir_original == 'S' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
+    }  else if ((dir->dir_original == 'N' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'S' && dir->dir_original == 'E') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
+        // printf("\nACQUIRING LEFT\n");
         // Handle Left Turn        
         sem_wait(&semaphoreWestToEast);
         sem_wait(&semaphoreEastToSouth);
@@ -65,7 +69,8 @@ void ArriveIntersection(directions *dir) {
         sem_wait(&semaphoreEastToWest);
         sem_wait(&semaphoreNorthToSouth);
     } else {
-        // Handle Right Turn
+    //    printf("\nACQUIRING RIGHT\n");
+       // Handle Right Turn
         sem_wait(&semaphoreWestToEast);
         sem_wait(&semaphoreNorthToWest);
     }
@@ -79,11 +84,12 @@ void ArriveIntersection(directions *dir) {
 void ExitIntersection(directions *dir) {
 
     // Log Exiting Information
-    printf("\nEXITING\n");
-    printf("\nTime %.1f: Car %d (->%c ->%c)                  exiting", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
+    // printf("\nEXITING\n");
+    // printf("\nTime %.1f: Car %d (->%c ->%c)                  exiting", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
 
     // Handle Release of Semaphores
      if (dir->dir_original == dir->dir_target) {
+        // printf("\nRELEASING STRAIGHT\n");
         // Handle Straight Driving
         sem_post(&semaphoreWestToEast);
         sem_post(&semaphoreEastToSouth);
@@ -92,7 +98,8 @@ void ExitIntersection(directions *dir) {
         sem_post(&semaphoreNorthToEast);
         sem_post(&semaphoreEastToNorth);
 
-    }  else if ((dir->dir_original == 'N' && dir->dir_original == 'E') || (dir->dir_original == 'S' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
+    }  else if ((dir->dir_original == 'N' && dir->dir_target == 'W') || (dir->dir_original == 'W' && dir->dir_target == 'N') || (dir->dir_original == 'S' && dir->dir_target == 'E') || (dir->dir_original == 'E' && dir->dir_target == 'S')) {
+        // printf("\nRELEASING LEFT\n");
         // Handle Left Turn        
         sem_post(&semaphoreWestToEast);
         sem_post(&semaphoreEastToSouth);
@@ -100,6 +107,7 @@ void ExitIntersection(directions *dir) {
         sem_post(&semaphoreEastToWest);
         sem_post(&semaphoreNorthToSouth);
     } else {
+        // printf("\nRELEASING RIGHT\n");
         // Handle Right Turn
         sem_post(&semaphoreWestToEast);
         sem_post(&semaphoreNorthToWest);
@@ -107,35 +115,46 @@ void ExitIntersection(directions *dir) {
 
     // Final Action Release Semaphore
     sem_post(&semaphoreArrival);
+
+    printf("\nTime %.1f: Car %d (->%c ->%c)                  exiting", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
+
 }
 
 void CrossIntersection(directions *dir) {
 
     if (dir->dir_original == dir->dir_target) {
-        printf("\nSTRAIGHT\n");
+        // printf("\nSTRAIGHT\n");
 
         // // Spin 
-        // Spin(2);
+        //  printf("\nSPINNING START\n");
+         usleep(2000);
+        //  printf("\nSPINNING END\n");
+        
 
         // Log Straight Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
-
-    }  else if ((dir->dir_original == 'N' && dir->dir_original == 'E') || (dir->dir_original == 'S' && dir->dir_original == 'W') || (dir->dir_original == 'W' && dir->dir_original == 'N') || (dir->dir_original == 'E' && dir->dir_original == 'S')) {
-        printf("\nLEFT\n");
+    }  else if ((dir->dir_original == 'N' && dir->dir_target == 'W') || (dir->dir_original == 'W' && dir->dir_target == 'N') || (dir->dir_original == 'S' && dir->dir_target == 'E') || (dir->dir_original == 'E' && dir->dir_target == 'S')) {
+        // printf("\nLEFT\n");
 
         // // Spin 
-        // Spin(3);
+        // printf("\nSPINNING START\n");
+        usleep(3000);
+        // printf("\nSPINNING END\n");
 
-        // Log LEft Turn
+        // Log Left Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
+        // dir->arrival_time += 3;
     } else {
-        printf("\nRIGHT\n");
+        // printf("\nRIGHT\n");
 
         // //Spin
-        // Spin(1);
+        // printf("\nSPINNING START\n");
+        usleep(1000);
+        // printf("\nSPINNING END\n");
 
         // Log Right Turn
         printf("\nTime %.1f: Car %d (->%c ->%c)          crossing", dir->arrival_time, dir->cid, dir->dir_original, dir->dir_target);
+        // dir->arrival_time += 1;
     }
 
 }
@@ -146,12 +165,12 @@ void threadfunc(void* direction) {
     // Arrival Semaphore
     ArriveIntersection(dir);
 
-    printf("\nPRE CROSSING\n");
+    // printf("\nPRE CROSSING\n");
 
     // Cross Semaphores
     CrossIntersection(dir);
 
-    printf("\nPOST CROSSING\n");
+    // printf("\nPOST CROSSING\n");
 
     // Exit Sempahore
     ExitIntersection(dir);
@@ -193,9 +212,8 @@ int main(void) {
     // Crossing - Traffic Crossing from West to East - DUPLICATE
 
     // Queue of Vehicles - 
-    directions cars[8] = {{'N', 'N', 1.1, 0}, {'N', 'N', 2.0, 1}, {'N', 'W', 3.3, 2}, {'S', 'S', 3.5, 3}, {'S', 'E', 4.2, 4}, {'N', 'N', 4.4, 5}, {'E', 'N', 5.7, 6}, {'W', 'N', 5.9, 7}};
-    
-    for (int i = 0; i < 8; i++) {
+    directions cars[9] = {{'N', 'N', 1.1, 0}, {'N', 'N', 2.0, 1}, {'N', 'W', 3.3, 2}, {'S', 'S', 3.5, 3}, {'S', 'E', 4.2, 4}, {'N', 'N', 4.4, 5}, {'E', 'N', 5.7, 6}, {'W', 'N', 5.9, 7}};
+    for (int i = 0; i <= 8; i++) {
 
         // Sleep
         switch(i){
